@@ -9,8 +9,13 @@
 #import <XCTest/XCTest.h>
 #import "OnboardingViewController.h"
 #import "OnboardingContentViewController.h"
+#import "OnboardingContentViewController_Private.h"
 
 @interface OnboardTests : XCTestCase
+
+@end
+
+@interface OnboardingContentViewController (Testing)
 
 @end
 
@@ -45,45 +50,32 @@
     XCTAssertFalse(onboardingVC.shouldBlurBackground, @"The background should not be blurred by default.");
 }
 
-- (void)testConvenienceSetters {
-    // This tests that when we use the convenience setter methods on the master onboaring view controller,
-    // the properties correctly trickle down to each of the child content view controllers.
-    OnboardingViewController *onboardingVC = [[OnboardingViewController alloc] initWithBackgroundImage:nil contents:[self generateStockContentVCS]];
-    
-    CGFloat testIconSize = 80;
-    onboardingVC.iconSize = testIconSize;
-    
-    UIColor *testColor = [UIColor purpleColor];
-    onboardingVC.titleTextColor = testColor;
-    onboardingVC.bodyTextColor = testColor;
-    onboardingVC.buttonTextColor = testColor;
-    
-    NSString *testFontName = @"Helvetica-LightOblique";
-    onboardingVC.fontName = testFontName;
-    
-    CGFloat testFontSize = 12;
-    onboardingVC.titleFontSize = testFontSize;
-    onboardingVC.bodyFontSize = testFontSize;
-    
-    CGFloat testPadding = 22;
-    onboardingVC.topPadding = testPadding;
-    onboardingVC.underIconPadding = testPadding;
-    onboardingVC.underTitlePadding = testPadding;
-    onboardingVC.bottomPadding = testPadding;
-    
-    NSArray *contentsFromController = onboardingVC.viewControllers;
-    
-    for (OnboardingContentViewController *contentVC in contentsFromController) {
-        XCTAssert(contentVC.titleTextColor == testColor, @"The content view controller's title text color is invalid.");
-        XCTAssert(contentVC.bodyTextColor == testColor, @"The content view controller's body text color is invalid.");
-        XCTAssert(contentVC.buttonTextColor == testColor, @"The content view controller's button test color is invalid.");
-        XCTAssert(contentVC.titleFontSize == testFontSize, @"The content view controller's title fotn size is invalid.");
-        XCTAssert(contentVC.bodyFontSize == testFontSize, @"The content view controller's body font size is invalid.");
-        XCTAssert(contentVC.topPadding == testPadding, @"The content view controller's top padding is invalid.");
-        XCTAssert(contentVC.underIconPadding == testPadding, @"The content view controller's under icon padding is invalid.");
-        XCTAssert(contentVC.underTitlePadding == testPadding, @"The content view controller's under title padding is invalid.");
-        XCTAssert(contentVC.bottomPadding == testPadding, @"The content view controller's bottom padding is invalid.");
-    }
+- (void)testActionHandler {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
+    OnboardingContentViewController *contentVC = [[OnboardingContentViewController alloc] initWithTitle:@"T1" body:@"B1" image:nil buttonText:nil action:^{
+        [expectation fulfill];
+    }];
+    [contentVC handleButtonPressed];
+    [self waitForExpectationsWithTimeout:1. handler:nil];
+}
+
+- (void)testActionHandlerWithOnboardController {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
+    OnboardingViewController *onboardingVC = [[OnboardingViewController alloc] initWithBackgroundImage:nil contents:nil];
+    OnboardingContentViewController *contentVC = [[OnboardingContentViewController alloc] initWithTitle:@"T1" body:@"B1" image:nil buttonText:nil actionBlock:^(OnboardingViewController *onboardController) {
+        if([onboardingVC isEqual:onboardController]) {
+            [expectation fulfill];
+        }
+    }];
+    onboardingVC.viewControllers = @[contentVC];
+    [onboardingVC viewDidLoad];
+    [contentVC handleButtonPressed];
+    [self waitForExpectationsWithTimeout:1. handler:nil];
+}
+
+- (void)testConvenientInitializer {
+    OnboardingContentViewController *contentVC = [OnboardingContentViewController contentWithTitle:@"T1" body:@"B1" image:nil buttonText:nil actionBlock:nil];
+    XCTAssertTrue([contentVC isKindOfClass:[OnboardingContentViewController class]], @"should get content controller");
 }
 
 
