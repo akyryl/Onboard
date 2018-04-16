@@ -38,7 +38,6 @@ static NSString * const kSkipButtonText = @"Skip";
     
     OnboardingContentViewController *_currentPage;
     OnboardingContentViewController *_upcomingPage;
-    UIImageView *_backgroundImageView;
 }
 
 - (void)dealloc {
