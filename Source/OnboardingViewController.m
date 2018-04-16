@@ -117,6 +117,8 @@ static NSString * const kSkipButtonText = @"Skip";
     [self.skipButton addTarget:self action:@selector(handleSkipButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.skipButton.titleLabel.adjustsFontSizeToFitWidth = YES;
 
+    self.backgroundImageView = [UIImageView new];
+
     return self;
 }
 

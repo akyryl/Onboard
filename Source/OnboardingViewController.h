@@ -25,6 +25,11 @@
 
 
 /**
+ * @brief The background image view
+ */
+@property (nonatomic, strong) UIImageView *backgroundImageView;
+
+/**
  * @brief Determines whether or not the background will be masked. The default value of this property is YES.
  */
 @property (nonatomic) BOOL shouldMaskBackground;
