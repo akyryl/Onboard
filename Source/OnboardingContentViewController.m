@@ -274,8 +274,10 @@ NSString * const kOnboardActionButtonAccessibilityIdentifier = @"OnboardActionBu
     CGFloat viewWidth = CGRectGetWidth(self.view.frame);
     CGFloat contentWidth = viewWidth * kContentWidthMultiplier;
     CGFloat xPadding = (viewWidth - contentWidth) / 2.0;
+    CGFloat iconImageViewWidth = MIN(contentWidth, self.iconWidth);
+    CGFloat imageShringScale = self.iconWidth > contentWidth ? contentWidth / self.iconWidth : 1.0;
 
-    [self.iconImageView setFrame:CGRectMake((viewWidth / 2.0) - (self.iconWidth / 2.0), self.topPadding, self.iconWidth, self.iconHeight)];
+    [self.iconImageView setFrame:CGRectMake((viewWidth / 2.0) - (iconImageViewWidth / 2.0), self.topPadding, iconImageViewWidth, self.iconHeight * imageShringScale)];
 
     CGFloat titleYOrigin = CGRectGetMaxY(self.iconImageView.frame) + self.underIconPadding;
 
